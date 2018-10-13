@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Web authentication demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+      html,
+      body {
+        min-height: 100%;
+
+        background: #E3E5E7;
+
+        font-family: sans-serif;
+      }
+
+      main {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        overflow: hidden;
+
+        width: 100%;
+        max-width: 400px;
+        padding-top: 240px;
+
+        text-align: center;
+      }
+
+      .cat {
+        transition: transform .4s cubic-bezier(0.600, 0, 0.735, 0.045);
+        transform: translate3d(0, 100%, 0);
+
+        postition: relative;
+      }
+
+      .button {
+        transition: background-color .2s ease;
+
+        position: relative;
+        z-index: 1;
+
+        display: inline-block;
+        padding: 16px 30px;
+
+        background: #EB5424;
+
+        border-radius: 3px;
+        border: 0;
+
+        color: #fff;
+        font-weight: 500;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        font-size: 16px;
+        line-height: 1.33;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+
+        touch-action: manipulation;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .popup {
+        transform: translateX(10%);
+
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        z-index: 2;
+
+        width: 380px;
+        box-sizing: border-box;
+        padding: 20px;
+        margin-bottom: 20px;
+
+        background: #1A1A1A;
+        opacity: 0;
+
+        border-radius: 3px;
+
+        font-size: 16px;
+        color: #FFF;
+        text-align: center;
+        line-height: normal;
+
+        pointer-events: none;
+      }
+
+      .popup::after {
+        content: '';
+
+        position: absolute;
+        top: 100%;
+        left: 50%;
+
+        width: 0;
+        height: 0;
+        margin-left: -10px;
+
+        border: 10px solid transparent;
+        border-top-width: 10px;
+        border-bottom-width: 0;
+        border-top-color: #1A1A1A;
+      }
+
+      ul {
+        padding: 0;
+
+        text-align: left;
+      }
+
+      li {
+        display: flex;
+        align-items: baseline;
+
+        padding: 0;
+        margin: 0;
+
+        font-size: 16px;
+        list-style: none;
+      }
+
+      li .label,
+      li .value {
+        display: block;
+        font-size: 16px;
+      }
+
+      li .label {
+        min-width: 70px;
+        margin-right: 10px;
+      }
+
+      li .value {
+        max-width: calc(100% - 70px);
+        margin: 5px 0;
+
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+
+        font-family: monospace;
+      }
+
+
+      .registered .cat {
+        transform: translate3d(0, 10px, 0);
+      }
+
+      .registered .popup {
+        transform: translateX(-50%);
+
+        opacity: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <div id="container" class="container">
+          <div class="cat">
+              <div class="popup">
+                <strong>Success! Here is some information about the credential you've registered:</strong>
+
+                <ul>
+                  <li>
+                    <span class="label">Algorithm: </span><strong id="key_algorithm" class="value"></strong>
+                  </li>
+                  <li>
+                    <span class="label">X: </span><strong id="key_x" class="value"></strong>
+                  </li>
+                  <li>
+                    <span class="label">Y: </span><strong id="key_y" class="value"></strong>
+                  </li>
+                </ul>
+              </div>
+              <img src="public/cat.svg" alt="A cat popping up from the register buttong" />
+          </div>
+
+          <button class="button" id="register">Register credential</button>
+      </div>
+    </main>
+
+    <script src="index.js"></script>
+  </body>
+</html>
