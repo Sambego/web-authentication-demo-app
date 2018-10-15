@@ -17,7 +17,7 @@ const attestationOptions = {
       displayName: "Sambego"
     },
     authenticatorSelection: {
-      authenticatorAttachment: "platform"
+      // authenticatorAttachment: "platform"
     },
     attestation: "direct",
     pubKeyCredParams: [
