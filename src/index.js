@@ -1,62 +1,102 @@
-import { getPublicKeyJWK } from "./util/attestation";
+import { arrayBufferToBase64 } from "./util/transformations";
+import { createRandomUIntArray } from "./util/crypto";
 
-const challenge = new Uint8Array(32);
-const userId = new Uint8Array(32);
-crypto.getRandomValues(challenge);
-crypto.getRandomValues(userId);
+const containerElement = document.getElementById("container");
+const createCredentialFormElement = document.getElementById(
+  "create_credential_form"
+);
+const usernameInputElement = document.getElementById("username_input");
+const getButtonElement = document.getElementById("get_credential");
+const messageElement = document.getElementById("message");
 
 const attestationOptions = {
-  publicKey: {
-    challenge: challenge,
-    rp: {
-      name: "Auth0"
-    },
-    user: {
-      id: userId,
-      name: "Sam Bellen",
-      displayName: "Sambego"
-    },
-    authenticatorSelection: {
-      authenticatorAttachment: "platform"
-    },
-    attestation: "direct",
-    pubKeyCredParams: [
-      {
-        type: "public-key",
-        alg: -7
+  challenge: createRandomUIntArray(),
+  rp: {
+    name: "Auth0"
+  },
+  authenticatorSelection: {
+    authenticatorAttachment: "platform"
+  },
+  attestation: "direct",
+  pubKeyCredParams: [
+    {
+      type: "public-key",
+      alg: -7
+    }
+  ]
+};
+
+const user = {
+  id: createRandomUIntArray(),
+  name: "",
+  displayName: ""
+};
+
+const createCredential = async event => {
+  event.preventDefault();
+
+  console.log("Registering new user");
+
+  user.name = usernameInputElement.value;
+  user.displayName = usernameInputElement.value;
+  try {
+    const attestation = await navigator.credentials.create({
+      publicKey: {
+        ...attestationOptions,
+        user
       }
-    ]
+    });
+    user.rawId = attestation.rawId;
+
+    containerElement.classList.add("registered");
+
+    console.log("Attestation", attestation);
+    console.log("Registered user:", arrayBufferToBase64(user.id));
+  } catch (error) {
+    console.error(error);
   }
 };
 
-(() => {
-  const container = document.getElementById("container");
-  const button = document.getElementById("register");
-  const keyAlgorithm = document.getElementById("key_algorithm");
-  const keyX = document.getElementById("key_x");
-  const keyY = document.getElementById("key_y");
+const getCredential = async event => {
+  console.log("Authenticating user");
+  try {
+    const credential = await navigator.credentials.get({
+      id: createRandomUIntArray(),
+      publicKey: {
+        challenge: createRandomUIntArray(),
+        timeout: 36000,
+        allowCredentials: [
+          {
+            type: "public-key",
+            id: user.rawId,
+            transports: ["internal"]
+          }
+        ]
+      }
+    });
 
-  const createCredentials = async event => {
-    event.preventDefault();
+    console.log("Credential", credential);
+    console.log(
+      "Authenticated user",
+      arrayBufferToBase64(credential.response.userHandle.rawId)
+    );
 
-    try {
-      const attestation = await navigator.credentials.create(
-        attestationOptions
-      );
-
-      const jwk = getPublicKeyJWK(attestation);
-
-      console.log("JWK", jwk);
-
-      keyAlgorithm.innerText = jwk.alg;
-      keyX.innerText = jwk.x;
-      keyY.innerText = jwk.y;
-
-      container.classList.add("registered");
-    } catch (error) {
-      console.log(error);
+    if (
+      arrayBufferToBase64(user.id) ===
+      arrayBufferToBase64(credential.response.userHandle)
+    ) {
+      messageElement.innerText = `Hey ${
+        user.displayName
+      }, nice to see you back!`;
+    } else {
+      messageElement.innerText = "Oops something went wrong authenticating";
     }
-  };
 
-  button.addEventListener("mousedown", createCredentials);
-})();
+    containerElement.classList.add("authenticated");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+createCredentialFormElement.addEventListener("submit", createCredential);
+getButtonElement.addEventListener("mousedown", getCredential);

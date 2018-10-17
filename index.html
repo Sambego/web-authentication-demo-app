@@ -29,15 +29,57 @@
         overflow: hidden;
 
         width: 100%;
-        max-width: 400px;
-        padding-top: 240px;
+        max-width: 440px;
+        padding: 20px;
 
         text-align: center;
       }
 
+      .form {
+        padding: 24px 16px;
+
+        background: #fff;
+
+        border-radius: 3px;
+        box-shadow: 0 0 20px rgba(0,0,0,.1);
+      }
+
+      .label {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+
+        text-align: left;
+        font-size: 16px;
+      }
+
+      .input {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        height: 46px;
+        padding: 8px 16px;
+        margin-bottom: 16px;
+
+        background-color: #fff;
+
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        outline: none;
+
+        font-size: 14px;
+        line-height: 2;
+        color: #555;
+      }
+
+      .cat-container {
+        display: none;
+      }
+
       .cat {
         transition: transform .4s cubic-bezier(0.600, 0, 0.735, 0.045);
-        transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, calc(100% + 100px), 0);
 
         postition: relative;
       }
@@ -152,12 +194,23 @@
         font-family: monospace;
       }
 
+      .container.registered {
+        padding: 200px 20px 20px 20px;
+      }
 
-      .registered .cat {
+      .registered .form {
+        display: none;
+      }
+
+      .registered .cat-container {
+        display: block;
+      }
+
+      .authenticated .cat {
         transform: translate3d(0, 10px, 0);
       }
 
-      .registered .popup {
+      .authenticated .popup {
         transform: translateX(-50%);
 
         opacity: 1;
@@ -168,26 +221,20 @@
   <body>
     <main>
       <div id="container" class="container">
-          <div class="cat">
-              <div class="popup">
-                <strong>Success! Here is some information about the credential you've registered:</strong>
+          <form id="create_credential_form" class="form">
+            <label class="label" for="username">Username:</label>
+            <input id="username_input" type="text" class="input" placeholder="Username" />
+            <input type="submit" value="register" class="button">
+          </form>
 
-                <ul>
-                  <li>
-                    <span class="label">Algorithm: </span><strong id="key_algorithm" class="value"></strong>
-                  </li>
-                  <li>
-                    <span class="label">X: </span><strong id="key_x" class="value"></strong>
-                  </li>
-                  <li>
-                    <span class="label">Y: </span><strong id="key_y" class="value"></strong>
-                  </li>
-                </ul>
-              </div>
-              <img src="public/cat.svg" alt="A cat popping up from the register buttong" />
+          <div class="cat-container">
+            <div class="cat">
+                <div id="message" class="popup"></div>
+                <img src="public/cat.svg" alt="A cat popping up from the register buttong" />
+            </div>
+
+            <button id="get_credential" class="button" >Authenticate</button>
           </div>
-
-          <button class="button" id="register">Register credential</button>
       </div>
     </main>
 
